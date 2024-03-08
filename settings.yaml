@@ -1,2 +1,7 @@
-foo: 1
-bar: 2
+database:
+  driver: mysql
+  db_user: test_name
+  db_password: test_password
+  db_host: 192.168.1.1
+  db_port: 1234
+  db_name: test_db
