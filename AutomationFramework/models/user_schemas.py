@@ -1,8 +1,8 @@
 from datetime import datetime
-
 from pydantic import BaseModel
 
 
+# 用户相关
 class UserBase(BaseModel):
     user_name: str
 
@@ -37,7 +37,11 @@ class TokenModel(UserInfo):
     token_type: str
 
 
+# 项目相关
 class ProjectBase(BaseModel):
     project_id: int | None = None
     project_name: str
     parent_project_id: int | None = None
+
+
+

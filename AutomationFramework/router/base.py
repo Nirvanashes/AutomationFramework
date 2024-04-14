@@ -5,7 +5,7 @@ from typing import Annotated
 from sqlalchemy.orm import Session
 from AutomationFramework.depedencies import get_db_session
 from AutomationFramework.common.sql import database, crud, models
-from AutomationFramework.models import schemas
+from AutomationFramework.models import user_schemas
 from AutomationFramework.utils.logger import Log
 
 router = APIRouter(
@@ -23,19 +23,19 @@ def get_project(user_id: int, db: Session = Depends(get_db_session)):
 
 
 @router.post("/addproject.do")
-def add_project(project: schemas.ProjectBase, db: Session = Depends(get_db_session)):
+def add_project(project: user_schemas.ProjectBase, db: Session = Depends(get_db_session)):
     data = crud.add_project(project, db)
     return data
 
 
 @router.post("/updateuserproject.do")
-def update_user_project(user: schemas.UserBase, db: Session = Depends(get_db_session)):
+def update_user_project(user: user_schemas.UserBase, db: Session = Depends(get_db_session)):
     data = crud.update_user_project(user, db)
     return data
 
 
-@router.post("/getchildproject.do", response_model=Page[schemas.ProjectBase])
-def get_child_project(project: schemas.ProjectBase, db: Session = Depends(get_db_session), params: Params = Depends()):
+@router.post("/getchildproject.do", response_model=Page[user_schemas.ProjectBase])
+def get_child_project(project: user_schemas.ProjectBase, db: Session = Depends(get_db_session), params: Params = Depends()):
     pass
 
 

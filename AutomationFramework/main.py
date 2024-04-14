@@ -3,16 +3,19 @@ from fastapi import FastAPI
 from fastapi_pagination import Page, paginate, Params, add_pagination
 from fastapi.middleware.cors import CORSMiddleware
 from AutomationFramework.common.sql.database import Base, engine
-from AutomationFramework.router import base, login
+from AutomationFramework.router import base, login,request
 
 app = FastAPI()
 app.include_router(base.router)
 app.include_router(login.router)
+app.include_router(request.router)
 
 
 origins = [
     "http://localhost",
-    "http://localhost:8000",
+    "http://localhost:8000/",
+    "http://localhost:8001/",
+    "http://0.0.0.0:8001/"
 ]
 
 app.add_middleware(

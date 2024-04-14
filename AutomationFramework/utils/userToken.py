@@ -7,12 +7,12 @@ from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 from AutomationFramework.common.sql import crud
 from AutomationFramework.depedencies import get_db_session
-from AutomationFramework.models import schemas
+from AutomationFramework.models import user_schemas
 from config import settings
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login.do")
-db1 = get_db_session()
+db1 = Session(get_db_session())
 
 
 def get_password_hash(password: str) -> str:
@@ -87,7 +87,7 @@ def get_current_user(token: Annotated[str, Depends(oauth2_scheme)],db: Session =
     return user
 
 
-def get_current_active_user(current_user: Annotated[schemas.UserInfo, Depends(get_current_user)]):
+def get_current_active_user(current_user: Annotated[user_schemas.UserInfo, Depends(get_current_user)]):
     if not current_user.is_active:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive user")
     return current_user

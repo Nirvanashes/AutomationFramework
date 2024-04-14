@@ -1,6 +1,10 @@
 import requests
 import datetime
 
+from AutomationFramework.utils.logger import Log
+
+log = Log("request")
+
 
 class Request:
     def __init__(self, url, session=False, **kwargs):
@@ -45,16 +49,14 @@ class Request:
             return Request.response(False, status_code, elapsed=elapsed, msg=str(e))
 
     @staticmethod
-    def response(status, status_code=200, response=None, reponse_headers=None, requests_headers=None, msg="success",
+    def response(status, status_code=200, response=None, response_headers=None, requests_headers=None, msg="success",
                  elapsed=None):
-        request_header = {k: v for k, v in requests_headers.items()}
-        response_header = {k: v for k, v in reponse_headers.items()}
         return {
             'status': status,
             'status_code': status_code,
             'response': response,
-            'request_header': request_header,
-            'response_header': response_header,
+            'request_header': requests_headers,
+            'response_header': response_headers,
             'elapsed': elapsed,
             'message': msg
         }

@@ -5,7 +5,7 @@ from typing import Annotated
 from sqlalchemy.orm import Session
 from AutomationFramework.depedencies import get_db_session
 from AutomationFramework.common.sql import database, crud, models
-from AutomationFramework.models import schemas
+from AutomationFramework.models import user_schemas
 from AutomationFramework.utils.logger import Log
 from AutomationFramework.utils.userToken import authenticate_user, get_current_active_user, create_access_token, \
     get_password_hash
@@ -18,15 +18,15 @@ router = APIRouter(
 
 log = Log("user")
 
-
-@router.post("/signup.do", response_model=schemas.UserInfo)
-def sign(*, data: schemas.CreateUser, db: Session = Depends(get_db_session)):
+@router.post("/signup.do", response_model=user_schemas.UserInfo)
+def sign(*, data: user_schemas.CreateUser, db: Session = Depends(get_db_session)):
     """
     用户注册
     :param data:
     :param db:
     :return:
     """
+
     user = crud.get_user_by_user_name(data.user_name, db)
     if user is not None:
         log.error("用户已存在")
@@ -40,9 +40,9 @@ def sign(*, data: schemas.CreateUser, db: Session = Depends(get_db_session)):
     return result
 
 
-@router.post("/login")
+@router.post("/login.do")
 def login(*, form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-          db: Session = Depends(get_db_session)) -> schemas.TokenModel:
+          db: Session = Depends(get_db_session)) -> user_schemas.TokenModel:
     """
     用户token登录接口
     :param form_data:
@@ -65,6 +65,6 @@ def login(*, form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     return user_info
 
 
-@router.get("/userinfo.do", response_model=schemas.UserInfo)
-def get_user_info(current_user: Annotated[schemas.UserInfo, Depends(get_current_active_user)]):
+@router.get("/userinfo.do", response_model=user_schemas.UserInfo)
+def get_user_info(current_user: Annotated[user_schemas.UserInfo, Depends(get_current_active_user)]):
     return current_user
