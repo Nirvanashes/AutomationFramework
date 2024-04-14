@@ -1,7 +1,16 @@
+---
 database:
-  driver: mysql
-  db_user: test_name
-  db_password: test_password
   db_host: 192.168.1.1
+  db_name: AutomationFramework
+  db_password: test_password
   db_port: 1234
-  db_name: test_db
+  db_user: test_name
+  driver: mysql
+log:
+  path: /logs/AutomationFramework.log
+sqlite:
+  path: sqlite:///./AutomationFramework.db
+token:
+  ACCESS_TOKEN_EXPIRE_MINUTES: 30
+  ALGORITHM: HS256
+  SECRET_KEY: f49e1029549bac0b4f1d9ed7b9de5135d68f49d401ea021e24d73826fd1c81e5

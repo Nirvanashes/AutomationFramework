@@ -7,11 +7,8 @@ class MySQLConnect(object):
     def __init__(self):
         self.data = None
         self.tablename = None
-        engine = create_engine(fr"{settings.database['driver']}+pymysql://"
-                               f"{settings.database['db_user']}:{settings.database['db_password']}"
-                               f"@{settings.database['db_host']}:{settings.database['db_port']}"
-                               f"/{settings.database['db_name']}?charset='utf-8'",
-                               echo=True)
+        self.SQLALCHEMY_DATABASE_URL = fr"{settings.database['driver']}+pymysql://{settings.database['db_user']}:{settings.database['db_password']}@{settings.database['db_host']}:{settings.database['db_port']}/{settings.database['db_name']}?charset='utf-8'"
+        engine = create_engine(self.SQLALCHEMY_DATABASE_URL,echo=True)
         Session = sessionmaker(bind=engine)
         self.session = Session()
 
