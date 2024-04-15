@@ -1,7 +1,9 @@
 from datetime import datetime
 from .database import Base, engine
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Boolean, func, TIMESTAMP, Index
-from sqlalchemy.orm import relationship,mapped_column
+
+
+# from sqlalchemy.orm import relationship,mapped_column
 
 
 # 基础信息表
@@ -17,10 +19,10 @@ class User(Base):
     password = Column(String(100), doc="密码")
     user_email = Column(String(100), unique=True, doc="用户邮箱")
     user_phone = Column(Integer, unique=True, doc="手机号")
-    user_type = Column(Integer,default=0, doc="用户类型：0:普通用户，1:管理员")
-    create_time = Column(DateTime,default=datetime.now, doc="创建时间")
-    update_time = Column(DateTime,default=datetime.now, onupdate=datetime.now, doc="更新时间")
-    default_project = Column(String,default=None, doc="默认项目", comment="默认项目")
+    user_type = Column(Integer, default=0, doc="用户类型：0:普通用户，1:管理员")
+    create_time = Column(DateTime, default=datetime.now, doc="创建时间")
+    update_time = Column(DateTime, default=datetime.now, onupdate=datetime.now, doc="更新时间")
+    default_project = Column(String, default=None, doc="默认项目", comment="默认项目")
     is_active = Column(Integer, default=1, doc="用户是否启用,0:禁用‘1:启用")
 
 
@@ -32,11 +34,11 @@ class Project(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     project_name = Column(String)
     parent_project_id = Column(Integer)
-    create_user = Column(Integer,doc="创建人id")
-    update_user = Column(Integer)
+    create_user = Column(Integer, comment="创建人id")
+    update_user = Column(Integer, comment="更新人id")
     create_time = Column(DateTime, default=datetime.now, doc="创建时间")
     update_time = Column(DateTime, default=datetime.now, onupdate=datetime.now, doc="更新时间")
-    is_deleted = Column(Integer, default=0,doc="是否删除")
+    is_deleted = Column(Integer, default=1,comment="是否删除，默认未删除")
 
 
 class Server(Base):
@@ -45,17 +47,18 @@ class Server(Base):
     """
     __tablename__ = "Server"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    server_name = Column(String,doc="服务器名称")
-    server_ip = Column(String,doc="服务器ip")
-    server_port = Column(Integer,doc="服务器端口")
-    server_user = Column(String,doc="服务器账号")
-    server_password = Column(String,doc="服务器密码")
-    server_type = Column(Integer,doc="服务器类型：0:服务器，1:数据库")
-    create_user = Column(Integer,doc="创建人id")
-    update_user = Column(Integer,doc="更新人id")
+    server_name = Column(String, doc="服务器名称")
+    server_ip = Column(String, doc="服务器ip")
+    server_port = Column(Integer, doc="服务器端口")
+    server_user = Column(String, doc="服务器账号")
+    server_password = Column(String, doc="服务器密码")
+    server_type = Column(Integer, doc="服务器类型：0:服务器，1:数据库")
+    database_name = Column(Integer,comment="数据库表")
+    create_user = Column(Integer, doc="创建人id")
+    update_user = Column(Integer, doc="更新人id")
     create_time = Column(DateTime, default=datetime.now, doc="创建时间")
     update_time = Column(DateTime, default=datetime.now, onupdate=datetime.now, doc="更新时间")
-    is_deleted = Column(Integer, default=0)
+    is_deleted = Column(Integer, default=1,comment="是否删除，默认未删除")
 
 
 # 接口测试相关表
@@ -65,49 +68,53 @@ class InterfacePath(Base):
     """
     __tablename__ = "InterfacePath"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    interface_name = Column(String, doc="接口名称")
-    protocol = Column(Integer, doc="协议：0:http，1:https协议", comment="协议：0:http，1:https协议")
-    method = Column(String,doc="接口请求方式:get，post")
-    headers = Column(String, doc="接口headers信息")
-    url = Column(String, doc="接口地址")
-    type = Column(String, doc="请求体类型：1:query，2:form-data，3:json")
-    parameters = Column(String, doc="请求参数样例")
-    description = Column(String, doc="接口描述")
-    serverpath = Column(String, doc="接口服务器地址")
-    source = Column(Integer, doc="来源：0:手工录入；1:yapi同步；")
-    belong_project = Column(Integer, doc="所属项目id",default=None)
-    create_user = Column(Integer,doc="创建人id")
-    update_user = Column(Integer,doc="更新人id")
-    create_time = Column(DateTime, default=datetime.now, doc="创建时间")
-    update_time = Column(DateTime, default=datetime.now, onupdate=datetime.now, doc="更新时间")
-    is_deleted = Column(Integer, default=0)
+    interface_name = Column(String, comment="接口名称")
+    protocol = Column(Integer, comment="协议：0:http，1:https协议")
+    method = Column(String, comment="接口请求方式:get，post")
+    headers = Column(String, comment="接口headers信息")
+    url = Column(String, comment="接口地址")
+    type = Column(String, comment="请求体类型：1:query，2:form-data，3:json")
+    parameters = Column(String, comment="请求参数样例")
+    description = Column(String, comment="接口描述")
+    server_path = Column(String, comment="接口服务器地址")
+    status = Column(Integer,comment="是否有效，默认有效",default=0)
+    source = Column(Integer, comment="来源：0:手工录入；1:yapi同步；")
+    belong_project = Column(Integer, comment="所属项目id", default=None)
+    create_user = Column(Integer, comment="创建人id")
+    update_user = Column(Integer, comment="更新人id")
+    create_time = Column(DateTime, default=datetime.now, comment="创建时间")
+    update_time = Column(DateTime, default=datetime.now, onupdate=datetime.now, comment="更新时间")
+    is_deleted = Column(Integer, default=1,comment="是否删除，默认未删除")
 
 
 # 接口用例表
 class TestCase(Base):
     __tablename__ = "testcase"
-    id = Column(Integer,primary_key=True,autoincrement=True)
-    name = Column(String,comment="接口用例名称")
-    interface_id = Column(Integer,comment="对应接口id")
-    parameters = Column(String,comment="用例参数")
-    status = Column(Integer,comment="用例状态")
-    expected = Column(String,comment="预期结果")
-    description = Column(String,comment="描述")
-    project_id = Column(Integer,comment="所属项目")
-    create_user = Column(Integer,doc="")
-    update_user = Column(Integer)
-    create_time = Column(DateTime, default=datetime.now, doc="创建时间")
-    update_time = Column(DateTime, default=datetime.now, onupdate=datetime.now, doc="更新时间")
-    is_deleted = Column(Integer, default=0)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, comment="接口用例名称")
+    interface_id = Column(Integer, comment="对应接口id")
+    parameters = Column(String, comment="用例参数")
+    status = Column(Integer, comment="用例启用状态，启用，未启用")
+    expected_result = Column(String, comment="预期结果")
+    description = Column(String, comment="描述")
+    server_path = Column(String, doc="接口用例执行对应的服务器地址")
+    belong_project = Column(Integer, comment="所属项目")
+    related_case = Column(Integer, comment="关联测试用例，优先执行关联用例")
+    create_user = Column(Integer, comment="创建人id")
+    update_user = Column(Integer, comment="更新人id")
+    create_time = Column(DateTime, default=datetime.now, comment="创建时间")
+    update_time = Column(DateTime, default=datetime.now, onupdate=datetime.now, comment="更新时间")
+    is_deleted = Column(Integer, default=1,comment="是否删除，默认未删除")
 
 
+# 用例执行记录表
+class TestCaseResult(Base):
+    pass
 
 
 # 性能测试相关表
 class LoadResource(Base):
     """施压机资源."""
-    # def __init__(self):
-    #     pass
     __tablename__ = 'load_resource'  # 数据库名字
     id = Column(Integer, primary_key=True, doc='主键', comment='主键')  # 压测资源主键，comment为列注释
     resource_ip = Column(String(50), doc='资源ip', comment='资源ip')  # 压测资源IP
@@ -117,8 +124,8 @@ class LoadResource(Base):
     task_name = Column(String(250))  # 占用资源的任务名字
     task_uid = Column(String(250), doc='任务id', comment='任务id')  # 占用资源的任务ID，根据任务ID可以得知项目和场景信息
     resource_status = Column(Boolean, default=False, doc='资源状态', comment='资源状态')  # 压测资源可用状态,默认False表示可用
-    gmt_create = Column(DateTime,default=datetime.now, doc='创建时间', comment='创建时间')  # 创建时间
-    gmt_modify = Column(DateTime,default=datetime.now, onupdate=datetime.now, doc='更新时间',
+    gmt_create = Column(DateTime, default=datetime.now, doc='创建时间', comment='创建时间')  # 创建时间
+    gmt_modify = Column(DateTime, default=datetime.now, onupdate=datetime.now, doc='更新时间',
                         comment='更新时间')  # 修改时间
     __table_args__ = (
         Index('index(zone,status)', 'resource_zone', 'resource_status'), {'comment': '压测资源表'})  # 添加索引和表注释
