@@ -6,7 +6,6 @@ from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Boolean, f
 # from sqlalchemy.orm import relationship,mapped_column
 
 
-# 基础信息表
 class User(Base):
     """
     用户表
@@ -24,6 +23,7 @@ class User(Base):
     update_time = Column(DateTime, default=datetime.now, onupdate=datetime.now, doc="更新时间")
     default_project = Column(String, default=None, doc="默认项目", comment="默认项目")
     is_active = Column(Integer, default=1, doc="用户是否启用,0:禁用‘1:启用")
+    __table_args__ = ({'comment': '用户表'})
 
 
 class Project(Base):
@@ -38,12 +38,13 @@ class Project(Base):
     update_user = Column(Integer, comment="更新人id")
     create_time = Column(DateTime, default=datetime.now, doc="创建时间")
     update_time = Column(DateTime, default=datetime.now, onupdate=datetime.now, doc="更新时间")
-    is_deleted = Column(Integer, default=1,comment="是否删除，默认未删除")
+    is_deleted = Column(Integer, default=1, comment="是否删除，默认未删除")
+    __table_args__ = ({'comment': '项目表'})
 
 
-class Server(Base):
+class ServerInfo(Base):
     """
-    服务器配置表
+    服务器&数据库配置表
     """
     __tablename__ = "Server"
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -53,15 +54,15 @@ class Server(Base):
     server_user = Column(String, doc="服务器账号")
     server_password = Column(String, doc="服务器密码")
     server_type = Column(Integer, doc="服务器类型：0:服务器，1:数据库")
-    database_name = Column(Integer,comment="数据库表")
+    database_name = Column(Integer, comment="数据库表")
     create_user = Column(Integer, doc="创建人id")
     update_user = Column(Integer, doc="更新人id")
     create_time = Column(DateTime, default=datetime.now, doc="创建时间")
     update_time = Column(DateTime, default=datetime.now, onupdate=datetime.now, doc="更新时间")
-    is_deleted = Column(Integer, default=1,comment="是否删除，默认未删除")
+    is_deleted = Column(Integer, default=1, comment="是否删除，默认未删除")
+    __table_args__ = ({'comment': '服务器&数据库配置表'})
 
 
-# 接口测试相关表
 class InterfacePath(Base):
     """
     接口信息表
@@ -77,43 +78,72 @@ class InterfacePath(Base):
     parameters = Column(String, comment="请求参数样例")
     description = Column(String, comment="接口描述")
     server_path = Column(String, comment="接口服务器地址")
-    status = Column(Integer,comment="是否有效，默认有效",default=0)
+    status = Column(Integer, comment="是否有效，默认有效", default=0)
     source = Column(Integer, comment="来源：0:手工录入；1:yapi同步；")
     belong_project = Column(Integer, comment="所属项目id", default=None)
-    case_num = Column(Integer,comment="接口关联用例数量？")
+    case_num = Column(Integer, comment="接口关联用例数量？")
     create_user = Column(Integer, comment="创建人id")
     update_user = Column(Integer, comment="更新人id")
     create_time = Column(DateTime, default=datetime.now, comment="创建时间")
     update_time = Column(DateTime, default=datetime.now, onupdate=datetime.now, comment="更新时间")
-    is_deleted = Column(Integer, default=1,comment="是否删除，默认未删除")
+    is_deleted = Column(Integer, default=1, comment="是否删除，默认未删除")
+    __table_args__ = ({'comment': '接口信息表'})
 
 
-# 接口用例表
-class TestCase(Base):
-    __tablename__ = "testcase"
+class TestCaseInfo(Base):
+    """
+    接口用例表
+    """
+    __tablename__ = "testcase_info"
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, comment="接口用例名称")
     interface_id = Column(Integer, comment="对应接口id")
     parameters = Column(String, comment="用例参数")
-    status = Column(Integer, comment="用例启用状态，启用，未启用")
+    status = Column(Integer, default=1, comment="用例启用状态，0:未启用,1:启用")
     expected_result = Column(String, comment="预期结果")
     description = Column(String, comment="描述")
-    server_path = Column(String, doc="接口用例执行对应的服务器地址")
+    server_path = Column(String, comment="接口用例执行对应的服务器地址")
     belong_project = Column(Integer, comment="所属项目")
     related_case = Column(Integer, comment="关联测试用例，优先执行关联用例")
     create_user = Column(Integer, comment="创建人id")
     update_user = Column(Integer, comment="更新人id")
     create_time = Column(DateTime, default=datetime.now, comment="创建时间")
     update_time = Column(DateTime, default=datetime.now, onupdate=datetime.now, comment="更新时间")
-    is_deleted = Column(Integer, default=1,comment="是否删除，默认未删除")
+    is_deleted = Column(Integer, default=1, comment="是否删除，默认未删除")
+    __table_args__ = ({'comment': '接口用例信息表'})
 
 
-# 用例执行记录表
-class TestCaseResult(Base):
-    pass
+class TestCaseExecution(Base):
+    """
+    用例执行记录主表
+    """
+    __table__ = "testcase_execution"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, comment="执行名称")
+    total_num = Column(Integer, comment="用例总数")
+    success_num = Column(Integer, comment="执行成功数")
+    fail_num = Column(Integer, comment="执行失败数")
+    skip_num = Column(Integer, comment="跳过用例数")
+    create_user = Column(Integer, comment="创建人id")
+    update_user = Column(Integer, comment="更新人id")
+    create_time = Column(DateTime, default=datetime.now, comment="创建时间")
+    update_time = Column(DateTime, default=datetime.now, onupdate=datetime.now, comment="更新时间")
+    is_deleted = Column(Integer, default=1, comment="是否删除，默认未删除")
+    __table_args__ = ({'comment': '用例执行记录主表'})
 
 
-# 性能测试相关表
+class TestCaseExecutionRecord(Base):
+    """
+    用例执行记录详情表
+    """
+    __table__ = "testcase_execution_record"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    testcase_id = Column(Integer, comment="关联用例id")
+    result_id = Column(Integer, comment="关联执行记录主表id")
+    status = Column(Integer, comment="用例执行状态")
+    __table_args__ = ({'comment': '用例执行记录详情表'})
+
+
 class LoadResource(Base):
     """施压机资源."""
     __tablename__ = 'load_resource'  # 数据库名字
