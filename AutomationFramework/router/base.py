@@ -36,12 +36,14 @@ def update_project(project: project_schemas.UpdateProject,
     db_session.set(db)
     return base_crud.update_or_delete_project(project, current_user)
 
+
 @router.post("/deleteproject.do")
 def delete_project(project: project_schemas.UpdateProject,
                    current_user: Annotated[user_schemas.UserInfo, Depends(get_current_active_user)],
                    db: Session = Depends(get_db_session)):
     db_session.set(db)
     return base_crud.update_or_delete_project(project, current_user)
+
 
 @router.post("/updateuserproject.do")
 def update_user_project(user: user_schemas.UserBase, db: Session = Depends(get_db_session)):
