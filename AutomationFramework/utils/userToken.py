@@ -5,6 +5,7 @@ from jose import jwt, JWTError
 from fastapi import Header, Depends, HTTPException,status
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
+
 from AutomationFramework.common.sql import crud
 from AutomationFramework.depedencies import get_db_session, db_session
 from AutomationFramework.models import user_schemas
@@ -12,7 +13,6 @@ from config import settings
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login.do")
-# context_aware_session = db_session.get()
 
 
 def get_password_hash(password: str) -> str:
@@ -59,8 +59,7 @@ def authenticate_user(username,password):
     :param db:
     :return:
     """
-    context_aware_session = db_session.get()
-    data = crud.get_user_by_user_name(username, context_aware_session)
+    data = crud.get_user_by_user_name(username)
     if not data:
         return False
     if not verify_password(password, data.password):
@@ -68,8 +67,8 @@ def authenticate_user(username,password):
     return data
 
 
-def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
-    context_aware_session = db_session.get()
+def get_current_user(token: Annotated[str, Depends(oauth2_scheme)],db: Session = Depends(get_db_session)):
+    db_session.set(db)
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",

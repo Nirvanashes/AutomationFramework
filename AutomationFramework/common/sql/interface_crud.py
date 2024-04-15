@@ -1,10 +1,6 @@
-import datetime
-from AutomationFramework.depedencies import get_db_session, db_session
-from AutomationFramework.utils.userToken import get_password_hash
-
-from sqlalchemy import func
+from AutomationFramework.common.sql import models
+from AutomationFramework.depedencies import db_session
 from AutomationFramework.models import interface_schemas
-from AutomationFramework.common.sql import database, models
 
 
 def get_all_interfaces():

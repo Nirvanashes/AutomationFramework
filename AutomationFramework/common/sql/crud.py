@@ -54,18 +54,4 @@ def query_project_by_id(project_id: int):
     return data
 
 
-def add_project(project: user_schemas.ProjectBase):
-    context_aware_session = db_session.get()
-    data = models.Project(project_name=project.project_name, parent_project_id=project.parent_project_id)
-    try:
-        context_aware_session.add(data)
-        context_aware_session.commit()
-        context_aware_session.refresh(data)
-        return data
-    except Exception as e:
-        context_aware_session.rollback()
 
-
-def delete_project_by_id(project: user_schemas.ProjectBase, db: Session):
-    context_aware_session = db_session.get()
-    pass

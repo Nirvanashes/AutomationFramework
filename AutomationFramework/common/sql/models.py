@@ -32,14 +32,14 @@ class Project(Base):
     """
     __tablename__ = "Project"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    project_name = Column(String)
-    parent_project_id = Column(Integer)
+    project_name = Column(String,comment="项目名称")
+    parent_project_id = Column(Integer,comment="父项目id")
     create_user = Column(Integer, comment="创建人id")
     update_user = Column(Integer, comment="更新人id")
     create_time = Column(DateTime, default=datetime.now, doc="创建时间")
     update_time = Column(DateTime, default=datetime.now, onupdate=datetime.now, doc="更新时间")
     is_deleted = Column(Integer, default=1, comment="是否删除，默认未删除")
-    __table_args__ = ({'comment': '项目表'})
+    __table_args__ = ({'comment': '项目表','extend_existing': True})
 
 
 class ServerInfo(Base):
@@ -113,7 +113,7 @@ class TestCaseInfo(Base):
     __table_args__ = ({'comment': '接口用例信息表'})
 
 
-class TestCaseExecution(Base):
+class TestCaseExecutionReport(Base):
     """
     用例执行记录主表
     """
