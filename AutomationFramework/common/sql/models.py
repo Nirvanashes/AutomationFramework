@@ -80,6 +80,7 @@ class InterfacePath(Base):
     status = Column(Integer,comment="是否有效，默认有效",default=0)
     source = Column(Integer, comment="来源：0:手工录入；1:yapi同步；")
     belong_project = Column(Integer, comment="所属项目id", default=None)
+    case_num = Column(Integer,comment="接口关联用例数量？")
     create_user = Column(Integer, comment="创建人id")
     update_user = Column(Integer, comment="更新人id")
     create_time = Column(DateTime, default=datetime.now, comment="创建时间")
