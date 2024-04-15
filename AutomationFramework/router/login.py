@@ -1,9 +1,9 @@
 from datetime import timedelta
-from fastapi import APIRouter, HTTPException, Depends, status,Header
+from fastapi import APIRouter, HTTPException, Depends, status, Header
 from fastapi.security import OAuth2PasswordRequestForm
 from typing import Annotated
 from sqlalchemy.orm import Session
-from AutomationFramework.depedencies import get_db_session
+from AutomationFramework.depedencies import get_db_session, db_session
 from AutomationFramework.common.sql import database, crud, models
 from AutomationFramework.models import user_schemas
 from AutomationFramework.utils.logger import Log
@@ -18,6 +18,7 @@ router = APIRouter(
 
 log = Log("user")
 
+
 @router.post("/signup.do", response_model=user_schemas.UserInfo)
 def sign(*, data: user_schemas.CreateUser, db: Session = Depends(get_db_session)):
     """
@@ -26,8 +27,8 @@ def sign(*, data: user_schemas.CreateUser, db: Session = Depends(get_db_session)
     :param db:
     :return:
     """
-
-    user = crud.get_user_by_user_name(data.user_name, db)
+    db_session.set(db)
+    user = crud.get_user_by_user_name(data.user_name)
     if user is not None:
         log.error("用户已存在")
         raise HTTPException(
@@ -36,7 +37,7 @@ def sign(*, data: user_schemas.CreateUser, db: Session = Depends(get_db_session)
         )
 
     data.password = get_password_hash(data.password)
-    result = crud.create_user(data, db)
+    result = crud.create_user(data)
     return result
 
 
@@ -49,7 +50,8 @@ def login(*, form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     :param db:
     :return:
     """
-    user_info = authenticate_user(form_data.username, form_data.password, db)
+    db_session.set(db)
+    user_info = authenticate_user(form_data.username, form_data.password)
     if not user_info:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
                             detail="Incorrect username or password",
