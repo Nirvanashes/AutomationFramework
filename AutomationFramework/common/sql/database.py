@@ -8,7 +8,7 @@ SQLALCHEMY_DATABASE_URL_SQLITE = f"{settings.sqlite['path']}"
 SQLALCHEMY_DATABASE_URL_MYSQL = fr"{settings.database['driver']}+pymysql://{settings.database['db_user']}:{settings.database['db_password']}@{settings.database['db_host']}:{settings.database['db_port']}/{settings.database['db_name']}?charset='utf-8'"
 
 # 启动引擎
-engine = create_engine(SQLALCHEMY_DATABASE_URL_MYSQL, connect_args={"check_same_thread": False})
+engine = create_engine(SQLALCHEMY_DATABASE_URL_SQLITE, connect_args={"check_same_thread": False})
 # engine = create_engine(SQLALCHEMY_DATABASE_URL_MYSQL,echo=True)
 
 # 启动会话

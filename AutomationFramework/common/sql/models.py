@@ -117,7 +117,7 @@ class TestCaseExecution(Base):
     """
     用例执行记录主表
     """
-    __table__ = "testcase_execution"
+    __tablename__ = "testcase_execution"
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, comment="执行名称")
     total_num = Column(Integer, comment="用例总数")
@@ -136,7 +136,7 @@ class TestCaseExecutionRecord(Base):
     """
     用例执行记录详情表
     """
-    __table__ = "testcase_execution_record"
+    __tablename__ = "testcase_execution_record"
     id = Column(Integer, primary_key=True, autoincrement=True)
     testcase_id = Column(Integer, comment="关联用例id")
     result_id = Column(Integer, comment="关联执行记录主表id")
