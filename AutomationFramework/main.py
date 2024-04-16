@@ -29,5 +29,8 @@ app.add_middleware(
 # 创建数据库表
 Base.metadata.create_all(bind=engine)
 
+#添加分页
+add_pagination(app)
+
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8001)

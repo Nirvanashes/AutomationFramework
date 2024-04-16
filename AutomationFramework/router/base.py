@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
-from fastapi_pagination import Page, Params, add_pagination
-from fastapi_pagination.ext.sqlalchemy import paginate
+from fastapi_pagination import Page, Params, paginate
+# from fastapi_pagination.ext.sqlalchemy import paginate
 from typing import Annotated
 from sqlalchemy.orm import Session
 from AutomationFramework.depedencies import get_db_session, db_session
@@ -16,9 +16,11 @@ router = APIRouter(
 log = Log("base")
 
 
-@router.get("queryprojects.do", response_model=Page[project_schemas.ProjectList])
-def query_projects(db: Session = Depends(get_db_session)):
-    pass
+@router.get("/queryprojects.do", response_model=Page[project_schemas.ProjectList])
+def get_all_projects(db: Session = Depends(get_db_session)):
+    db_session.set(db)
+    data = base_crud.get_all_projects()
+    return paginate(data)
 
 
 @router.post("/addproject.do")
@@ -55,6 +57,3 @@ def update_user_project(user: user_schemas.UserBase, db: Session = Depends(get_d
 def get_child_project(project: user_schemas.ProjectBase, db: Session = Depends(get_db_session),
                       params: Params = Depends()):
     pass
-
-
-add_pagination(router)

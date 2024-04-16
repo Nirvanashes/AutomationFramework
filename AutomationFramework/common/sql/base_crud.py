@@ -11,12 +11,34 @@ from AutomationFramework.utils.userToken import get_current_active_user
 log = Log("base")
 
 
+def generate_tree(projects, parent_id=None):
+    tree = []
+    query = list[project_schemas.ProjectList]
+    for project in projects:
+        if project.parent_project_id == parent_id:
+            formatted_project = {
+                "project_name": project.project_name,
+                "parent_project_id": project.parent_project_id,
+                "id": project.id,
+                "is_deleted": project.is_deleted,
+                "update_user": project.update_user,
+                "create_time": project.create_time,  # Assuming create_time is a datetime object
+                "update_time": project.update_time,  # Assuming update_time is a datetime object
+                "children": generate_tree(projects, project.id)
+            }
+            tree.append(formatted_project)
+    return tree
+
+
 def get_all_projects():
     """
     返回所有未删除的项目列表
     :return:
     """
     context_aware_session = db_session.get()
+    data = context_aware_session.query(models.Project).filter_by(is_deleted=1).all()
+    tree = generate_tree(data)
+    return tree
 
 
 def add_project(project: project_schemas.ProjectBase, current_user):
@@ -47,7 +69,7 @@ def update_or_delete_project(project: project_schemas.UpdateProject, current_use
         # data = context_aware_session.query(models.Project).filter(models.Project.id == project.id).filter(models.Project.is_deleted == 1).update(project.dict())
         (context_aware_session.query(models.Project)
          .filter_by(id=project.id, is_deleted=1)
-         .update(models.Project(**project.dict(),update_user=current_user.id)))
+         .update(models.Project(**project.dict(), update_user=current_user.id)))
         context_aware_session.commit()
         return True
     except Exception as e:
