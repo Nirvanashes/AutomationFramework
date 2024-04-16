@@ -3,7 +3,7 @@ from typing import Annotated
 
 from sqlalchemy.orm import Session
 
-from AutomationFramework.common.sql.database import SessionLocal
+from AutomationFramework.common.db.database import SessionLocal
 from fastapi import Header, HTTPException
 
 

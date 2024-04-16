@@ -1,5 +1,5 @@
 import logbook
-from config import settings
+from AutomationFramework.config.config import settings
 from .decorator import SingletonDecorator
 
 

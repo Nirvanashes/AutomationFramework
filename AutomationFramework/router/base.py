@@ -1,13 +1,13 @@
-from fastapi import APIRouter, HTTPException, Depends
-from fastapi_pagination import Page, Params, paginate
+from fastapi import APIRouter, Depends
+from fastapi_pagination import Page, paginate
 # from fastapi_pagination.ext.sqlalchemy import paginate
 from typing import Annotated
 from sqlalchemy.orm import Session
-from AutomationFramework.depedencies import get_db_session, db_session
-from AutomationFramework.common.sql import database, user_crud, models, base_crud
-from AutomationFramework.models import user_schemas, project_schemas
+from AutomationFramework.dependencies import get_db_session, db_session
+from AutomationFramework.common.db.crud import base_crud, user_crud
+from AutomationFramework.schemas import user_schemas, project_schemas
 from AutomationFramework.utils.logger import Log
-from AutomationFramework.utils.userToken import get_current_active_user
+from AutomationFramework.utils.user_token import get_current_active_user
 
 router = APIRouter(
     prefix="/base",
@@ -78,7 +78,7 @@ def update_user_project(default_project:int,
                         current_user: Annotated[user_schemas.UserInfo, Depends(get_current_active_user)],
                         db: Session = Depends(get_db_session)):
     db_session.set(db)
-    data = user_crud.update_user_project(default_project,current_user)
+    data = user_crud.update_user_project(default_project, current_user)
     return data
 
 

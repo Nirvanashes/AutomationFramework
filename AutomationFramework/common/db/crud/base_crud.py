@@ -3,11 +3,10 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy import or_, and_
 
-from AutomationFramework.common.sql import models
-from AutomationFramework.depedencies import db_session
-from AutomationFramework.models import project_schemas, user_schemas
+from AutomationFramework.common.db.models import models
+from AutomationFramework.dependencies import db_session
+from AutomationFramework.schemas import project_schemas, user_schemas
 from AutomationFramework.utils.logger import Log
-from AutomationFramework.utils.userToken import get_current_active_user
 
 log = Log("base")
 
@@ -48,6 +47,13 @@ def query_projects():
     return tree
 
 
+def query_project_by_id(project_id: int):
+    context_aware_session = db_session.get()
+    data = context_aware_session.query(models.Project).filter(
+        models.Project.id == project_id and models.Project.is_deleted == 1).all()
+    return data
+
+
 def add_project(project: project_schemas.ProjectBase, current_user):
     context_aware_session = db_session.get()
 
@@ -74,7 +80,8 @@ def update_or_delete_project(project: project_schemas.UpdateProject, current_use
     data = project.dict()
     data['update_user'] = current_user.id
     try:
-        result = context_aware_session.query(models.Project).filter(models.Project.id == project.id).filter(models.Project.is_deleted == 1).update(data)
+        result = context_aware_session.query(models.Project).filter(models.Project.id == project.id).filter(
+            models.Project.is_deleted == 1).update(data)
         context_aware_session.commit()
         return True
     except Exception as e:

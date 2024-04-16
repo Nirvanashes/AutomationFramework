@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-from config import settings
+from AutomationFramework.config.config import settings
 
 # 数据库地址
 SQLALCHEMY_DATABASE_URL_SQLITE = f"{settings.sqlite['path']}"

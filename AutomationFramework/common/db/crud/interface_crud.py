@@ -1,6 +1,6 @@
-from AutomationFramework.common.sql import models
-from AutomationFramework.depedencies import db_session
-from AutomationFramework.models import interface_schemas
+from AutomationFramework.common.db import models
+from AutomationFramework.dependencies import db_session
+from AutomationFramework.schemas import interface_schemas
 
 
 def get_all_interfaces():

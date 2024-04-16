@@ -1,18 +1,22 @@
 from datetime import timedelta, datetime
 from typing import Optional, Annotated
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
-from fastapi import Header, Depends, HTTPException,status
+from fastapi import Depends, HTTPException,status
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
-from AutomationFramework.common.sql import user_crud
-from AutomationFramework.depedencies import get_db_session, db_session
-from AutomationFramework.models import user_schemas
-from config import settings
+from AutomationFramework.common.db.crud import user_crud
+from AutomationFramework.dependencies import get_db_session, db_session
+from AutomationFramework.schemas import user_schemas
+from AutomationFramework.utils.symmetric_encryption import SymmetricEncryption
+from AutomationFramework.config.config import settings
 
+
+# 使用 "bcrypt" 算法对密码进行哈希
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login.do")
+encryption = SymmetricEncryption()
 
 
 def get_password_hash(password: str) -> str:
@@ -54,16 +58,19 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 def authenticate_user(username,password):
     """
     校验用户是否存在
-    :param username:
+    :param username:用户名
     :param password:未加密的密码
     :param db:
     :return:
     """
-    # todo：给密码加上对称加密，解密后再与数据库密码对比，前后端禁止密码明文传输
     data = user_crud.get_user_by_user_name(username)
+    # todo：给密码加上对称加密，解密后再与数据库密码对比，前后端禁止密码明文传输
+    decrypt_password = encryption.decrypt(password)
     if not data:
         return False
     if not verify_password(password, data.password):
+        return False
+    if not verify_password(decrypt_password, data.password):
         return False
     return data
 
@@ -83,7 +90,7 @@ def get_current_user(token: Annotated[str, Depends(oauth2_scheme)],db: Session =
         token_data = user_schemas.UserBase(user_name=username)
     except JWTError:
         raise credentials_exception
-    user = crud.get_user_by_user_name(token_data.user_name)
+    user = user_crud.get_user_by_user_name(token_data.user_name)
     if user is None:
         raise credentials_exception
     return user

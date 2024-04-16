@@ -1,5 +1,5 @@
 from datetime import datetime
-from .database import Base, engine
+from AutomationFramework.common.db.database import Base, engine
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Boolean, func, TIMESTAMP, Index
 
 

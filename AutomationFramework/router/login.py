@@ -1,15 +1,15 @@
 from datetime import timedelta
-from fastapi import APIRouter, HTTPException, Depends, status, Header
+from fastapi import APIRouter, HTTPException, Depends, status
 from fastapi.security import OAuth2PasswordRequestForm
 from typing import Annotated
 from sqlalchemy.orm import Session
-from AutomationFramework.depedencies import get_db_session, db_session
-from AutomationFramework.common.sql import database, user_crud, models
-from AutomationFramework.models import user_schemas
+from AutomationFramework.dependencies import get_db_session, db_session
+from AutomationFramework.common.db.crud import user_crud
+from AutomationFramework.schemas import user_schemas
 from AutomationFramework.utils.logger import Log
-from AutomationFramework.utils.userToken import authenticate_user, get_current_active_user, create_access_token, \
+from AutomationFramework.utils.user_token import authenticate_user, get_current_active_user, create_access_token, \
     get_password_hash
-from config import settings
+from AutomationFramework.config.config import settings
 
 router = APIRouter(
     prefix="/auth",

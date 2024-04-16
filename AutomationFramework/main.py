@@ -4,7 +4,7 @@ from fastapi_pagination import Page, paginate, Params, add_pagination
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from AutomationFramework.common.sql.database import Base, engine
+from AutomationFramework.common.db.database import Base, engine
 from AutomationFramework.router import base, login, interface
 
 app = FastAPI()
