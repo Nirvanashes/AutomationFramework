@@ -2,14 +2,17 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi_pagination import Page, paginate, Params, add_pagination
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+
 from AutomationFramework.common.sql.database import Base, engine
-from AutomationFramework.router import base, login,interface
+from AutomationFramework.router import base, login, interface
 
 app = FastAPI()
+# 添加分页
+add_pagination(app)
 app.include_router(base.router)
 app.include_router(login.router)
 app.include_router(interface.router)
-
 
 origins = [
     "http://localhost",
@@ -29,7 +32,7 @@ app.add_middleware(
 # 创建数据库表
 Base.metadata.create_all(bind=engine)
 
-#添加分页
+# 添加分页
 add_pagination(app)
 
 if __name__ == "__main__":

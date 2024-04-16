@@ -6,7 +6,7 @@ from fastapi import Header, Depends, HTTPException,status
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
-from AutomationFramework.common.sql import crud
+from AutomationFramework.common.sql import user_crud
 from AutomationFramework.depedencies import get_db_session, db_session
 from AutomationFramework.models import user_schemas
 from config import settings
@@ -55,11 +55,12 @@ def authenticate_user(username,password):
     """
     校验用户是否存在
     :param username:
-    :param password:
+    :param password:未加密的密码
     :param db:
     :return:
     """
-    data = crud.get_user_by_user_name(username)
+    # todo：给密码加上对称加密，解密后再与数据库密码对比，前后端禁止密码明文传输
+    data = user_crud.get_user_by_user_name(username)
     if not data:
         return False
     if not verify_password(password, data.password):

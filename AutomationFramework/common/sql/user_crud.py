@@ -36,14 +36,14 @@ def update_user_by_id(user: user_schemas.UserBase):
     pass
 
 
-def update_user_project(user: user_schemas.UserBase):
+def update_user_project(default_project,current_user):
     context_aware_session = db_session.get()
-    user_project = models.User(user_id=user.user_id, default_project=user.default_project)
+    (context_aware_session.query(models.User)
+     .filter_by(id=current_user.id)
+     .update({models.User.default_project: default_project}))
     try:
-        # context_aware_session.add(user_project)
         context_aware_session.commit()
-        context_aware_session.refresh(user_project)
-        return user_project
+        return True
     except Exception as e:
         context_aware_session.rollback()
 

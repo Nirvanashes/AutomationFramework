@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 
 class ProjectBase(BaseModel):
-    project_name: str
+    project_name: str | None = None
     parent_project_id: int | None = None
 
 

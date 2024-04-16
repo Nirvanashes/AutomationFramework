@@ -4,7 +4,7 @@ from fastapi_pagination import Page, Params, paginate
 from typing import Annotated
 from sqlalchemy.orm import Session
 from AutomationFramework.depedencies import get_db_session, db_session
-from AutomationFramework.common.sql import database, crud, models, base_crud
+from AutomationFramework.common.sql import database, user_crud, models, base_crud
 from AutomationFramework.models import user_schemas, project_schemas
 from AutomationFramework.utils.logger import Log
 from AutomationFramework.utils.userToken import get_current_active_user
@@ -17,9 +17,14 @@ log = Log("base")
 
 
 @router.get("/queryprojects.do", response_model=Page[project_schemas.ProjectList])
-def get_all_projects(db: Session = Depends(get_db_session)):
+def query_projects(db: Session = Depends(get_db_session)):
+    """
+    获取未删除的项目列表
+    :param db:
+    :return:
+    """
     db_session.set(db)
-    data = base_crud.get_all_projects()
+    data = base_crud.query_projects()
     return paginate(data)
 
 
@@ -27,6 +32,13 @@ def get_all_projects(db: Session = Depends(get_db_session)):
 def add_project(project: project_schemas.ProjectBase,
                 current_user: Annotated[user_schemas.UserInfo, Depends(get_current_active_user)],
                 db: Session = Depends(get_db_session)):
+    """
+    添加项目或子项目
+    :param project:
+    :param current_user:
+    :param db:
+    :return:
+    """
     db_session.set(db)
     return base_crud.add_project(project, current_user)
 
@@ -35,6 +47,13 @@ def add_project(project: project_schemas.ProjectBase,
 def update_project(project: project_schemas.UpdateProject,
                    current_user: Annotated[user_schemas.UserInfo, Depends(get_current_active_user)],
                    db: Session = Depends(get_db_session)):
+    """
+    更新项目
+    :param project:
+    :param current_user:
+    :param db:
+    :return:
+    """
     db_session.set(db)
     return base_crud.update_or_delete_project(project, current_user)
 
@@ -43,17 +62,23 @@ def update_project(project: project_schemas.UpdateProject,
 def delete_project(project: project_schemas.UpdateProject,
                    current_user: Annotated[user_schemas.UserInfo, Depends(get_current_active_user)],
                    db: Session = Depends(get_db_session)):
+    """
+    逻辑删除项目，is_deleted传入0即表示未删除
+    :param project:
+    :param current_user:
+    :param db:
+    :return:
+    """
     db_session.set(db)
     return base_crud.update_or_delete_project(project, current_user)
 
 
 @router.post("/updateuserproject.do")
-def update_user_project(user: user_schemas.UserBase, db: Session = Depends(get_db_session)):
-    data = crud.update_user_project(user, db)
+def update_user_project(default_project:int,
+                        current_user: Annotated[user_schemas.UserInfo, Depends(get_current_active_user)],
+                        db: Session = Depends(get_db_session)):
+    db_session.set(db)
+    data = user_crud.update_user_project(default_project,current_user)
     return data
 
 
-@router.post("/getprojectlist.do", response_model=Page[user_schemas.ProjectBase])
-def get_child_project(project: user_schemas.ProjectBase, db: Session = Depends(get_db_session),
-                      params: Params = Depends()):
-    pass

@@ -25,7 +25,7 @@ class UserInfo(UserBase):
     create_time: datetime
     update_time: datetime
     is_active: int | None = None
-    default_project_id: int | None = None
+    default_project: int | None = None
 
     class Config:
         # orm_mode = True
@@ -37,11 +37,5 @@ class TokenModel(UserInfo):
     token_type: str
 
 
-# 项目相关
-class ProjectBase(BaseModel):
-    project_id: int | None = None
-    project_name: str
-    parent_project_id: int | None = None
-
-
-
+class UpdateProject(BaseModel):
+    default_project: int | None = None

@@ -4,7 +4,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from typing import Annotated
 from sqlalchemy.orm import Session
 from AutomationFramework.depedencies import get_db_session, db_session
-from AutomationFramework.common.sql import database, crud, models
+from AutomationFramework.common.sql import database, user_crud, models
 from AutomationFramework.models import user_schemas
 from AutomationFramework.utils.logger import Log
 from AutomationFramework.utils.userToken import authenticate_user, get_current_active_user, create_access_token, \
@@ -28,7 +28,7 @@ def sign(*, data: user_schemas.CreateUser, db: Session = Depends(get_db_session)
     :return:
     """
     db_session.set(db)
-    user = crud.get_user_by_user_name(data.user_name)
+    user = user_crud.get_user_by_user_name(data.user_name)
     if user is not None:
         log.error("用户已存在")
         raise HTTPException(
@@ -37,7 +37,7 @@ def sign(*, data: user_schemas.CreateUser, db: Session = Depends(get_db_session)
         )
 
     data.password = get_password_hash(data.password)
-    result = crud.create_user(data)
+    result = user_crud.create_user(data)
     return result
 
 
@@ -59,6 +59,7 @@ def login(*, form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
                             )
     access_token_expires = timedelta(minutes=settings.token['ACCESS_TOKEN_EXPIRE_MINUTES'])
     access_token = create_access_token(
+        # todo:username改成id
         data={"sub": user_info.user_name},
         expires_delta=access_token_expires
     )

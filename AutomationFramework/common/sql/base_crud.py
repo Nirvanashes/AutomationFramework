@@ -1,6 +1,7 @@
 from typing import Annotated
 
 from fastapi import Depends
+from sqlalchemy import or_, and_
 
 from AutomationFramework.common.sql import models
 from AutomationFramework.depedencies import db_session
@@ -11,9 +12,13 @@ from AutomationFramework.utils.userToken import get_current_active_user
 log = Log("base")
 
 
-def generate_tree(projects, parent_id=None):
+def generate_project_tree(projects, parent_id=None):
+    """
+    :param projects:
+    :param parent_id:
+    :return:
+    """
     tree = []
-    query = list[project_schemas.ProjectList]
     for project in projects:
         if project.parent_project_id == parent_id:
             formatted_project = {
@@ -22,22 +27,24 @@ def generate_tree(projects, parent_id=None):
                 "id": project.id,
                 "is_deleted": project.is_deleted,
                 "update_user": project.update_user,
-                "create_time": project.create_time,  # Assuming create_time is a datetime object
-                "update_time": project.update_time,  # Assuming update_time is a datetime object
-                "children": generate_tree(projects, project.id)
+                "create_time": project.create_time,
+                "update_time": project.update_time,
+                "children": generate_project_tree(projects, project.id)
             }
             tree.append(formatted_project)
     return tree
 
 
-def get_all_projects():
+def query_projects():
     """
-    返回所有未删除的项目列表
+
     :return:
     """
     context_aware_session = db_session.get()
-    data = context_aware_session.query(models.Project).filter_by(is_deleted=1).all()
-    tree = generate_tree(data)
+    data = (context_aware_session.query(models.Project)
+            .filter(models.Project.is_deleted == 1)
+            .all())
+    tree = generate_project_tree(data)
     return tree
 
 
@@ -64,12 +71,10 @@ def update_or_delete_project(project: project_schemas.UpdateProject, current_use
     :return:
     """
     context_aware_session = db_session.get()
-    # data = project.dict()['update_user'] = current_user.id
+    data = project.dict()
+    data['update_user'] = current_user.id
     try:
-        # data = context_aware_session.query(models.Project).filter(models.Project.id == project.id).filter(models.Project.is_deleted == 1).update(project.dict())
-        (context_aware_session.query(models.Project)
-         .filter_by(id=project.id, is_deleted=1)
-         .update(models.Project(**project.dict(), update_user=current_user.id)))
+        result = context_aware_session.query(models.Project).filter(models.Project.id == project.id).filter(models.Project.is_deleted == 1).update(data)
         context_aware_session.commit()
         return True
     except Exception as e:
