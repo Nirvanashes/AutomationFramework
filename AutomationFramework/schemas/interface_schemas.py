@@ -33,6 +33,6 @@ class InterfaceInfo(CreateInterface):
         from_attributes = True
 
 
-class queryInterface(BaseModel):
+class QueryInterface(BaseModel):
     interface_name: str | None = None
     url: str | None = None

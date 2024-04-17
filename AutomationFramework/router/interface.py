@@ -40,7 +40,7 @@ def get_interface(interface_id: int, db: Session = Depends(get_db_session)):
 
 
 @router.post("/queryinterface.do")
-def query_interface(query: interface_schemas.queryInterface, db: Session = Depends(get_db_session)):
+def query_interface(query: interface_schemas.QueryInterface, db: Session = Depends(get_db_session)):
     db_session.set(db)
     data = interface_crud.query_interface(query)
     return data

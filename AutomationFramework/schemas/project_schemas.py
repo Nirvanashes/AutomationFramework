@@ -9,13 +9,9 @@ class ProjectBase(BaseModel):
     parent_project_id: int | None = None
 
 
-# class CreateProject(ProjectBase):
-#     create_user: int
-#
-#
 class UpdateProject(ProjectBase):
     id: int
-    is_deleted: int = 1
+    is_deleted: int = 0
 
 
 class ProjectInfo(ProjectBase):

@@ -5,43 +5,21 @@ from sqlalchemy import or_, and_
 
 from AutomationFramework.common.db.models import models
 from AutomationFramework.dependencies import db_session
+from AutomationFramework.models.project import generate_project_tree
 from AutomationFramework.schemas import project_schemas, user_schemas
 from AutomationFramework.utils.logger import Log
 
 log = Log("base")
 
 
-def generate_project_tree(projects, parent_id=None):
-    """
-    :param projects:
-    :param parent_id:
-    :return:
-    """
-    tree = []
-    for project in projects:
-        if project.parent_project_id == parent_id:
-            formatted_project = {
-                "project_name": project.project_name,
-                "parent_project_id": project.parent_project_id,
-                "id": project.id,
-                "is_deleted": project.is_deleted,
-                "update_user": project.update_user,
-                "create_time": project.create_time,
-                "update_time": project.update_time,
-                "children": generate_project_tree(projects, project.id)
-            }
-            tree.append(formatted_project)
-    return tree
-
-
 def query_projects():
     """
-
+    获取未删除的项目树
     :return:
     """
     context_aware_session = db_session.get()
     data = (context_aware_session.query(models.Project)
-            .filter(models.Project.is_deleted == 1)
+            .filter(models.Project.is_deleted == 0)
             .all())
     tree = generate_project_tree(data)
     return tree
@@ -50,7 +28,7 @@ def query_projects():
 def query_project_by_id(project_id: int):
     context_aware_session = db_session.get()
     data = context_aware_session.query(models.Project).filter(
-        models.Project.id == project_id and models.Project.is_deleted == 1).all()
+        models.Project.id == project_id and models.Project.is_deleted == 1).first()
     return data
 
 
@@ -88,3 +66,6 @@ def update_or_delete_project(project: project_schemas.UpdateProject, current_use
         context_aware_session.rollback()
         log.error(e)
         return False
+
+
+

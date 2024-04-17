@@ -38,7 +38,7 @@ class Project(Base):
     update_user = Column(Integer, comment="更新人id")
     create_time = Column(DateTime, default=datetime.now, doc="创建时间")
     update_time = Column(DateTime, default=datetime.now, onupdate=datetime.now, doc="更新时间")
-    is_deleted = Column(Integer, default=1, comment="是否删除，默认未删除")
+    is_deleted = Column(Integer, default=0, comment="是否删除，默认未删除")
     __table_args__ = ({'comment': '项目表','extend_existing': True})
 
 
@@ -48,18 +48,19 @@ class ServerInfo(Base):
     """
     __tablename__ = "Server"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    server_name = Column(String, doc="服务器名称")
-    server_ip = Column(String, doc="服务器ip")
-    server_port = Column(Integer, doc="服务器端口")
-    server_user = Column(String, doc="服务器账号")
-    server_password = Column(String, doc="服务器密码")
-    server_type = Column(Integer, doc="服务器类型：0:服务器，1:数据库")
+    name = Column(String, doc="服务器名称")
+    ip = Column(String, doc="服务器ip")
+    port = Column(Integer, doc="服务器端口")
+    account = Column(String, doc="服务器账号")
+    password = Column(String, doc="服务器密码")
+    type = Column(Integer, doc="服务器类型：0:服务器，1:数据库")
     database_name = Column(Integer, comment="数据库表")
+    description = Column(String, comment="接口描述")
     create_user = Column(Integer, doc="创建人id")
     update_user = Column(Integer, doc="更新人id")
     create_time = Column(DateTime, default=datetime.now, doc="创建时间")
     update_time = Column(DateTime, default=datetime.now, onupdate=datetime.now, doc="更新时间")
-    is_deleted = Column(Integer, default=1, comment="是否删除，默认未删除")
+    is_deleted = Column(Integer, default=0, comment="是否删除，默认未删除")
     __table_args__ = ({'comment': '服务器&数据库配置表'})
 
 
@@ -86,7 +87,7 @@ class InterfacePath(Base):
     update_user = Column(Integer, comment="更新人id")
     create_time = Column(DateTime, default=datetime.now, comment="创建时间")
     update_time = Column(DateTime, default=datetime.now, onupdate=datetime.now, comment="更新时间")
-    is_deleted = Column(Integer, default=1, comment="是否删除，默认未删除")
+    is_deleted = Column(Integer, default=0, comment="是否删除，默认未删除")
     __table_args__ = ({'comment': '接口信息表'})
 
 
@@ -109,7 +110,7 @@ class TestCaseInfo(Base):
     update_user = Column(Integer, comment="更新人id")
     create_time = Column(DateTime, default=datetime.now, comment="创建时间")
     update_time = Column(DateTime, default=datetime.now, onupdate=datetime.now, comment="更新时间")
-    is_deleted = Column(Integer, default=1, comment="是否删除，默认未删除")
+    is_deleted = Column(Integer, default=0, comment="是否删除，默认未删除")
     __table_args__ = ({'comment': '接口用例信息表'})
 
 
@@ -128,7 +129,7 @@ class TestCaseExecutionReport(Base):
     update_user = Column(Integer, comment="更新人id")
     create_time = Column(DateTime, default=datetime.now, comment="创建时间")
     update_time = Column(DateTime, default=datetime.now, onupdate=datetime.now, comment="更新时间")
-    is_deleted = Column(Integer, default=1, comment="是否删除，默认未删除")
+    is_deleted = Column(Integer, default=0, comment="是否删除，默认未删除")
     __table_args__ = ({'comment': '用例执行记录主表'})
 
 

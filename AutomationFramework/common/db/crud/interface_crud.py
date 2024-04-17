@@ -1,4 +1,4 @@
-from AutomationFramework.common.db import models
+from AutomationFramework.common.db.models import models
 from AutomationFramework.dependencies import db_session
 from AutomationFramework.schemas import interface_schemas
 
@@ -12,7 +12,7 @@ def get_all_interfaces():
     return context_aware_session.query(models.InterfacePath).filter(models.InterfacePath.is_deleted == 0).all()
 
 
-def query_interface(querydata: interface_schemas.queryInterface):
+def query_interface(querydata: interface_schemas.QueryInterface):
     """
     查询接口
     :param querydata:
