@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from AutomationFramework.common.db.database import Base, engine
-from AutomationFramework.router import base, login, interface
+from AutomationFramework.router import base, login, interface,testcase
 
 app = FastAPI()
 # 添加分页
@@ -13,6 +13,7 @@ add_pagination(app)
 app.include_router(base.router)
 app.include_router(login.router)
 app.include_router(interface.router)
+app.include_router(testcase.router)
 
 origins = [
     "http://localhost",
