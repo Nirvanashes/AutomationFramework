@@ -16,9 +16,9 @@ def query_server_list(name: str = None, ip: int = None):
     return result
 
 
-def get_serverinfo_by_id(id: int) -> models.ServerInfo:
+def get_serverinfo_by_id(server_id: int):
     context_aware_session = db_session.get()
-    query = context_aware_session.query(models.ServerInfo).filter(models.ServerInfo.id == id).first()
+    query = context_aware_session.query(models.ServerInfo).filter(models.ServerInfo.id == server_id).first()
     return query
 
 

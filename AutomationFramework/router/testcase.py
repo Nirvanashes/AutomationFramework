@@ -7,6 +7,7 @@ from fastapi_pagination import Page, paginate
 from sqlalchemy.orm import Session
 from AutomationFramework.dependencies import get_db_session, db_session
 from AutomationFramework.common.db.crud import user_crud, testcase_crud
+from AutomationFramework.models.testcase import executed_testcase
 from AutomationFramework.schemas import user_schemas, testcase_schemas
 from AutomationFramework.utils.logger import Log
 from AutomationFramework.utils.user_token import authenticate_user, get_current_active_user, create_access_token, \
@@ -56,3 +57,13 @@ def delete_testcase(testcase_id: int,
                     db: Session = Depends(get_db_session)):
     db_session.set(db)
     return testcase_crud.delete_test_case(testcase_id, current_user)
+
+
+# 执行接口用例
+@router.post("/executeInterfaceUseCases.do")
+async def execute_interface_testcases(data: testcase_schemas.ExecuteInterfaceTestCases,
+                                current_user: Annotated[user_schemas.UserInfo, Depends(get_current_active_user)],
+                                db: Session = Depends(get_db_session)):
+    db_session.set(db)
+    result = await executed_testcase(data, current_user)
+    return result

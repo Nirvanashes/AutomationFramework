@@ -10,7 +10,7 @@ class InterfacePathBase(BaseModel):
     headers: dict | None = None
     url: str
     parameters: dict | None = None
-    type: int
+    # type: int
 
 
 class CreateInterface(InterfacePathBase):
